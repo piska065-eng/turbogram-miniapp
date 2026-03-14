@@ -708,6 +708,29 @@
             }
         }
 
+        // Функция покупки VIP (отправляет данные в бота)
+        function buyVIP() {
+            if (tg) {
+                // Показываем уведомление
+                showNotification('⏳ Отправка запроса...', true);
+                
+                // Отправляем данные в бота
+                tg.sendData('buy_vip');
+                
+                // Показываем сообщение об успехе
+                setTimeout(() => {
+                    showNotification('✅ Запрос отправлен! Сейчас откроется счет', true);
+                }, 500);
+                
+                // Закрываем приложение через 2 секунды
+                setTimeout(() => {
+                    tg.close();
+                }, 2000);
+            } else {
+                alert('Это приложение работает только в Telegram');
+            }
+        }
+
         // Все регионы
         const regions = [
             "Москва", "Санкт-Петербург", "Московская обл.", "Ленинградская обл.",
@@ -1070,13 +1093,13 @@
 
                     <div class="action-buttons">
                         <button class="action-btn free" onclick="freeHorizontalBoost()">🚀 Ускорить</button>
-                        <button class="action-btn vip" onclick="goToBotForVIP()">👑 КУПИТЬ VIP (в боте)</button>
+                        <button class="action-btn vip" onclick="buyVIP()">👑 КУПИТЬ VIP</button>
                     </div>
                 </div>
             `;
         }
 
-        // Бесплатное ускорение (горизонтальное)
+        // Бесплатное ускорение
         function freeHorizontalBoost() {
             const hiddenContent = document.getElementById('hiddenContent');
             if (!hiddenContent) return;
@@ -1163,24 +1186,10 @@
                     </div>
 
                     <div style="margin-top: 20px;">
-                        <button class="action-btn vip" onclick="goToBotForVIP()" style="width: 100%;">👑 КУПИТЬ VIP (в боте)</button>
+                        <button class="action-btn vip" onclick="buyVIP()" style="width: 100%;">👑 КУПИТЬ VIP</button>
                     </div>
                 </div>
             `;
-        }
-
-        // НОВАЯ ФУНКЦИЯ: Переход в бота для покупки VIP
-        function goToBotForVIP() {
-            if (tg) {
-                showNotification('✅ Перейдите в бота и нажмите кнопку "👑 VIP" для покупки', true);
-                
-                // Закрываем приложение через 2 секунды
-                setTimeout(() => {
-                    tg.close();
-                }, 2000);
-            } else {
-                alert('Это приложение работает только в Telegram');
-            }
         }
     </script>
 </body>
