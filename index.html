@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TurboGram — Космический ускоритель</title>
+    <title>TurboGram — Диагностика</title>
     
     <!-- Подключаем Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -157,6 +157,10 @@
         .big-diagnostic-btn .btn-subtext {
             color: #b0b0ff;
             font-size: 16px;
+        }
+
+        .big-diagnostic-btn.hidden {
+            display: none;
         }
 
         /* Скрытый контент */
@@ -322,10 +326,124 @@
             box-shadow: 0 10px 25px rgba(76, 175, 80, 0.4);
         }
 
-        .start-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
+        /* КОНТЕЙНЕР ДИАГНОСТИКИ */
+        .diagnostic-container {
+            background: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 30px 20px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+        }
+
+        .diagnostic-title {
+            text-align: center;
+            color: #ffd966;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        /* ГОРИЗОНТАЛЬНЫЙ ПОЛЗУНОК С РАКЕТОЙ */
+        .slider-container {
+            position: relative;
+            width: 100%;
+            height: 60px;
+            margin: 40px 0;
+        }
+
+        .slider-track {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            overflow: visible;
+        }
+
+        .slider-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #ffd966, #ff6b6b);
+            width: 0%;
+            border-radius: 3px;
+            box-shadow: 0 0 10px #ffd966;
+            transition: width 0.2s ease;
+        }
+
+        /* РАКЕТА-СМАЙЛИК НА ПОЛЗУНКЕ */
+        .rocket-slider {
+            position: absolute;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 40px;
+            filter: drop-shadow(0 0 20px #ffd966);
+            z-index: 10;
+            transition: left 0.2s ease;
+            cursor: default;
+            animation: rocketShake 0.5s ease-in-out infinite;
+        }
+
+        @keyframes rocketShake {
+            0%, 100% { transform: translate(-50%, -50%) rotate(-5deg); }
+            50% { transform: translate(-50%, -50%) rotate(5deg); }
+        }
+
+        /* Проценты над ползунком */
+        .percent-display {
+            text-align: center;
+            font-size: 36px;
+            font-weight: 800;
+            color: #ffd966;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        }
+
+        .percent-label {
+            text-align: center;
+            color: #b0b0ff;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        /* Параметры замера */
+        .measure-params {
+            display: flex;
+            justify-content: space-around;
+            margin: 30px 0;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 15px;
+            width: 100%;
+        }
+
+        .param-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .param-label {
+            color: #b0b0ff;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+
+        .param-value {
+            color: #ffd966;
+            font-size: 20px;
+            font-weight: 700;
+            font-family: 'Courier New', monospace;
+        }
+
+        .param-unit {
+            color: #b0b0ff;
+            font-size: 10px;
+            margin-left: 2px;
         }
 
         /* Анимация загрузки */
@@ -467,56 +585,29 @@
             transform: translateY(-2px);
         }
 
-        /* Анимация ускорения */
-        .boost-animation {
-            text-align: center;
-            padding: 30px;
-            background: rgba(255, 215, 0, 0.1);
+        /* Кнопка закрытия */
+        .close-btn {
+            background: rgba(255, 107, 107, 0.2);
+            border: 2px solid #ff6b6b;
+            color: #ff6b6b;
+            padding: 15px;
             border-radius: 50px;
-            margin: 20px 0;
-        }
-
-        .rocket-boost {
-            font-size: 60px;
-            animation: boostFly 1s ease-in-out infinite;
-        }
-
-        @keyframes boostFly {
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(20px); }
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #ffd966, #ffaa00);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        /* Кнопка назад */
-        .back-btn {
-            background: none;
-            border: 1px solid #b0b0ff;
-            color: #b0b0ff;
-            padding: 12px;
-            border-radius: 25px;
-            margin-top: 10px;
+            margin-top: 20px;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 18px;
+            font-weight: 700;
             transition: all 0.3s ease;
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
         }
 
-        .back-btn:hover {
-            background: rgba(176, 176, 255, 0.1);
+        .close-btn:hover {
+            background: #ff6b6b;
+            color: #fff;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 107, 107, 0.5);
         }
     </style>
 </head>
@@ -550,7 +641,7 @@
         </div>
 
         <!-- Большая кнопка диагностики -->
-        <div class="big-diagnostic-btn" onclick="startLoading()">
+        <div class="big-diagnostic-btn" id="diagnosticBtn" onclick="startDiagnosticProcess()">
             <div class="btn-icon">🚀</div>
             <div class="btn-text">ДИАГНОСТИКА</div>
             <div class="btn-subtext">нажми чтобы начать</div>
@@ -558,6 +649,9 @@
 
         <!-- Скрытый контент -->
         <div class="hidden-content" id="hiddenContent"></div>
+        
+        <!-- Кнопка закрытия приложения -->
+        <button class="close-btn" onclick="closeApp()">✕ ЗАКРЫТЬ ПРИЛОЖЕНИЕ</button>
     </div>
 
     <script>
@@ -566,6 +660,16 @@
         if (tg) {
             tg.ready();
             tg.expand();
+        }
+
+        // Функция закрытия приложения
+        function closeApp() {
+            if (tg) {
+                tg.close();
+            } else {
+                alert('Приложение будет закрыто');
+                window.close();
+            }
         }
 
         // Все регионы
@@ -607,10 +711,8 @@
 
         // Ждем загрузки страницы
         window.addEventListener('load', function() {
-            // Создаем звезды
             createStars();
             
-            // Автоматически скрываем загрузку через 2 секунды
             setTimeout(function() {
                 const loadingScreen = document.getElementById('loadingScreen');
                 if (loadingScreen) {
@@ -636,11 +738,11 @@
             }
         }
 
-        // Загрузка с процентами (5 секунд)
-        function startLoading() {
-            const loadingScreen = document.getElementById('loadingScreen');
-            if (!loadingScreen) return;
+        // Начать процесс диагностики
+        function startDiagnosticProcess() {
+            document.getElementById('diagnosticBtn').classList.add('hidden');
             
+            const loadingScreen = document.getElementById('loadingScreen');
             loadingScreen.classList.remove('hidden');
             
             let percent = 0;
@@ -684,7 +786,7 @@
                     <div class="section-title" style="margin-top: 10px;">🏢 Провайдер</div>
                     <div id="providersContainer" class="provider-grid"></div>
 
-                    <button class="start-btn" onclick="startDiagnostic()">
+                    <button class="start-btn" onclick="startHorizontalLoading()">
                         🚀 Запустить диагностику
                     </button>
                 </div>
@@ -695,7 +797,6 @@
             loadRegions();
             loadProviders();
             
-            // Обновляем онлайн
             setInterval(() => {
                 const online = Math.floor(Math.random() * (7000 - 5800 + 1)) + 5800;
                 const onlineUsers = document.getElementById('onlineUsers');
@@ -776,8 +877,8 @@
             }
         }
 
-        // Запуск диагностики (8 секунд)
-        function startDiagnostic() {
+        // Запуск горизонтальной загрузки
+        function startHorizontalLoading() {
             if (!selectedRegion || !selectedProvider) {
                 alert('⚠️ Выберите регион и провайдера!');
                 return;
@@ -787,30 +888,101 @@
             if (!hiddenContent) return;
             
             hiddenContent.innerHTML = `
-                <div class="boost-animation">
-                    <div class="rocket-boost">🚀😺</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFill"></div>
+                <div class="online-card">
+                    <div class="online-value" id="onlineUsers">${document.getElementById('onlineUsers')?.textContent || '6,234'}</div>
+                    <div class="online-label">👥 Пользователей сейчас онлайн</div>
+                </div>
+
+                <div class="diagnostic-container">
+                    <div class="diagnostic-title">🚀 ДИАГНОСТИКА</div>
+                    
+                    <div class="percent-display" id="percentDisplay">0%</div>
+                    <div class="percent-label" id="percentLabel">Измерение скорости...</div>
+                    
+                    <div class="slider-container">
+                        <div class="slider-track">
+                            <div class="slider-fill" id="sliderFill"></div>
+                        </div>
+                        <div class="rocket-slider" id="rocketSlider">🚀</div>
                     </div>
-                    <div id="boostPercent">0%</div>
-                    <div style="margin-top: 10px; color: #b0b0ff;">Анализ соединения...</div>
+
+                    <div class="measure-params">
+                        <div class="param-item">
+                            <div class="param-label">ПИНГ</div>
+                            <div class="param-value" id="pingValue">0</div>
+                            <span class="param-unit">мс</span>
+                        </div>
+                        <div class="param-item">
+                            <div class="param-label">ЗАГРУЗКА</div>
+                            <div class="param-value" id="downloadValue">0.0</div>
+                            <span class="param-unit">Mbps</span>
+                        </div>
+                        <div class="param-item">
+                            <div class="param-label">ОТДАЧА</div>
+                            <div class="param-value" id="uploadValue">0.0</div>
+                            <span class="param-unit">Mbps</span>
+                        </div>
+                    </div>
                 </div>
             `;
+            
+            startHorizontalAnimation();
+        }
 
-            let percent = 0;
+        // Горизонтальная анимация
+        function startHorizontalAnimation() {
+            let step = 0;
+            const totalSteps = 75;
+            
+            const percentDisplay = document.getElementById('percentDisplay');
+            const percentLabel = document.getElementById('percentLabel');
+            const sliderFill = document.getElementById('sliderFill');
+            const rocketSlider = document.getElementById('rocketSlider');
+            const pingValue = document.getElementById('pingValue');
+            const downloadValue = document.getElementById('downloadValue');
+            const uploadValue = document.getElementById('uploadValue');
+            
+            const phases = [
+                'Калибровка датчиков...',
+                'Поиск сервера...',
+                'Замер пинга...',
+                'Тест загрузки...',
+                'Тест отдачи...',
+                'Анализ данных...'
+            ];
+            
             const interval = setInterval(() => {
-                percent += 2;
-                const progressFill = document.getElementById('progressFill');
-                const boostPercent = document.getElementById('boostPercent');
+                step++;
                 
-                if (progressFill) progressFill.style.width = percent + '%';
-                if (boostPercent) boostPercent.textContent = percent + '%';
-
-                if (percent >= 100) {
+                const percent = Math.min(100, Math.floor((step / totalSteps) * 100));
+                
+                // Обновляем проценты
+                percentDisplay.textContent = percent + '%';
+                
+                // Обновляем заполнение ползунка
+                sliderFill.style.width = percent + '%';
+                
+                // Двигаем ракету
+                rocketSlider.style.left = percent + '%';
+                
+                // Обновляем подпись
+                const phaseIndex = Math.min(Math.floor(percent / 17), phases.length - 1);
+                percentLabel.textContent = phases[phaseIndex];
+                
+                // Обновляем параметры
+                pingValue.textContent = Math.floor(45 + (percent / 100) * 50);
+                downloadValue.textContent = (1.5 + (percent / 100) * 4).toFixed(1);
+                uploadValue.textContent = (0.8 + (percent / 100) * 2).toFixed(1);
+                
+                if (step >= totalSteps) {
                     clearInterval(interval);
-                    setTimeout(showResults, 500);
+                    setTimeout(() => {
+                        percentDisplay.textContent = '100%';
+                        percentLabel.textContent = 'Замер завершен!';
+                        setTimeout(showResults, 1000);
+                    }, 500);
                 }
-            }, 160);
+            }, 200);
         }
 
         // Показываем результаты
@@ -861,48 +1033,69 @@
                     </div>
 
                     <div class="action-buttons">
-                        <button class="action-btn free" onclick="freeBoost()">⚡️ Бесплатно</button>
+                        <button class="action-btn free" onclick="freeHorizontalBoost()">🚀 Ускорить</button>
                         <button class="action-btn vip" onclick="buyVIP()">👑 VIP</button>
                     </div>
                 </div>
-
-                <button class="back-btn" onclick="resetToMain()">◀️ Назад</button>
             `;
         }
 
-        // Бесплатное ускорение (5 секунд)
-        function freeBoost() {
+        // Бесплатное ускорение (горизонтальное)
+        function freeHorizontalBoost() {
             const hiddenContent = document.getElementById('hiddenContent');
             if (!hiddenContent) return;
             
             hiddenContent.innerHTML = `
-                <div class="boost-animation">
-                    <div class="rocket-boost">⚡️😺</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" id="progressFillFree"></div>
+                <div class="online-card">
+                    <div class="online-value">${document.getElementById('onlineUsers')?.textContent || '6,234'}</div>
+                    <div class="online-label">👥 Пользователей сейчас онлайн</div>
+                </div>
+
+                <div class="diagnostic-container">
+                    <div class="diagnostic-title">⚡️ УСКОРЕНИЕ</div>
+                    
+                    <div class="percent-display" id="boostPercent">0%</div>
+                    <div class="percent-label" id="boostLabel">Применение ускорения...</div>
+                    
+                    <div class="slider-container">
+                        <div class="slider-track">
+                            <div class="slider-fill" id="boostSliderFill"></div>
+                        </div>
+                        <div class="rocket-slider" id="boostRocket">🚀</div>
                     </div>
-                    <div id="boostPercentFree">0%</div>
-                    <div style="margin-top: 10px; color: #b0b0ff;">Применение ускорения...</div>
                 </div>
             `;
-
-            let percent = 0;
+            
+            let step = 0;
+            const totalSteps = 50;
+            
+            const boostPercent = document.getElementById('boostPercent');
+            const boostLabel = document.getElementById('boostLabel');
+            const boostSliderFill = document.getElementById('boostSliderFill');
+            const boostRocket = document.getElementById('boostRocket');
+            
             const interval = setInterval(() => {
-                percent += 2;
-                const progressFillFree = document.getElementById('progressFillFree');
-                const boostPercentFree = document.getElementById('boostPercentFree');
+                step++;
                 
-                if (progressFillFree) progressFillFree.style.width = percent + '%';
-                if (boostPercentFree) boostPercentFree.textContent = percent + '%';
-
-                if (percent >= 100) {
+                const percent = Math.min(100, Math.floor((step / totalSteps) * 100));
+                
+                boostPercent.textContent = percent + '%';
+                boostSliderFill.style.width = percent + '%';
+                boostRocket.style.left = percent + '%';
+                
+                if (percent < 30) boostLabel.textContent = 'Активация протокола...';
+                else if (percent < 60) boostLabel.textContent = 'Оптимизация канала...';
+                else if (percent < 90) boostLabel.textContent = 'Стабилизация соединения...';
+                else boostLabel.textContent = 'Завершение...';
+                
+                if (step >= totalSteps) {
                     clearInterval(interval);
                     setTimeout(showFreeResult, 500);
                 }
-            }, 100);
+            }, 200);
         }
 
-        // Результат бесплатного ускорения
+        // Результат ускорения
         function showFreeResult() {
             const hiddenContent = document.getElementById('hiddenContent');
             if (!hiddenContent) return;
@@ -937,8 +1130,6 @@
                         <button class="action-btn vip" onclick="buyVIP()" style="width: 100%;">👑 VIP за 100 ⭐️</button>
                     </div>
                 </div>
-
-                <button class="back-btn" onclick="resetToMain()">◀️ Назад</button>
             `;
         }
 
@@ -948,14 +1139,12 @@
                 tg.sendData(JSON.stringify({
                     action: 'buy_vip'
                 }));
+                setTimeout(() => {
+                    tg.close();
+                }, 500);
             } else {
                 alert('VIP покупка доступна только в Telegram');
             }
-        }
-
-        // Сброс в главное меню
-        function resetToMain() {
-            location.reload();
         }
     </script>
 </body>
