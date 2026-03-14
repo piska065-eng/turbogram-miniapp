@@ -20,90 +20,943 @@
             background: linear-gradient(135deg, #0a0f2e 0%, #1a1f3f 100%);
             min-height: 100vh;
             color: #fff;
+            overflow-x: hidden;
+            position: relative;
         }
 
-        .container {
+        /* Анимированный фон со звездами */
+        .stars {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+
+        /* Летающие котики */
+        .floating-cats {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .cat-rocket {
+            position: absolute;
+            font-size: 40px;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+            animation: fly 20s linear infinite;
+            opacity: 0.7;
+        }
+
+        .cat-rocket:nth-child(1) { top: 20%; left: -10%; animation-duration: 15s; }
+        .cat-rocket:nth-child(2) { top: 50%; left: -15%; animation-duration: 18s; animation-delay: 2s; }
+        .cat-rocket:nth-child(3) { top: 70%; left: -20%; animation-duration: 22s; animation-delay: 4s; }
+
+        @keyframes fly {
+            from { transform: translateX(0) rotate(0deg); }
+            to { transform: translateX(120vw) rotate(360deg); }
+        }
+
+        /* Основной контент */
+        .content {
+            position: relative;
+            z-index: 2;
             max-width: 500px;
             margin: 0 auto;
             padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Шапка */
+        .header {
+            text-align: center;
+            padding: 30px 0;
+        }
+
+        .logo {
+            font-size: 64px;
+            margin-bottom: 10px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .title {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #ffd966);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            color: #b0b0ff;
+            font-size: 14px;
+        }
+
+        /* Большая кнопка диагностики */
+        .big-diagnostic-btn {
+            background: linear-gradient(135deg, #4a3f6e, #2a1f4e);
+            border: 2px solid #ffd966;
+            border-radius: 60px;
+            padding: 30px;
+            margin: 50px 0;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.5s ease;
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .big-diagnostic-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 50px rgba(255, 215, 0, 0.5);
+        }
+
+        .big-diagnostic-btn .btn-icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+        }
+
+        .big-diagnostic-btn .btn-text {
+            font-size: 28px;
+            font-weight: 800;
+            color: #ffd966;
+            margin-bottom: 10px;
+        }
+
+        .big-diagnostic-btn .btn-subtext {
+            color: #b0b0ff;
+            font-size: 16px;
+        }
+
+        /* Скрытый контент */
+        .hidden-content {
+            display: none;
+            animation: slideIn 0.8s ease;
+        }
+
+        .hidden-content.show {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Карточка онлайн */
+        .online-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .online-value {
+            font-size: 36px;
+            font-weight: 800;
+            color: #ffd966;
+            margin-bottom: 5px;
+        }
+
+        .online-label {
+            font-size: 14px;
+            color: #b0b0ff;
+        }
+
+        /* Блок диагностики */
+        .diagnostic-block {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #ffd966;
             text-align: center;
         }
 
-        h1 {
-            font-size: 32px;
-            color: #ffd966;
-            margin: 30px 0;
+        /* Регионы */
+        .region-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
         }
 
-        .btn {
-            background: linear-gradient(135deg, #4a3f6e, #2a1f4e);
-            border: 2px solid #ffd966;
-            border-radius: 50px;
-            padding: 20px;
-            margin: 20px 0;
-            color: white;
-            font-size: 20px;
-            font-weight: bold;
+        .region-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 12px;
+            padding: 12px 5px;
+            font-size: 13px;
+            color: #fff;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.3s ease;
+            text-align: center;
         }
 
-        .btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+        .region-btn:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: translateY(-2px);
         }
 
-        .online {
-            background: rgba(255,255,255,0.1);
-            border-radius: 15px;
+        .region-btn.selected {
+            background: linear-gradient(135deg, #ffd966, #ffaa00);
+            color: #1a1f3f;
+            font-weight: 700;
+            border: none;
+        }
+
+        /* Навигация */
+        .nav-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0 20px;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: #ffd966;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 5px 15px;
+        }
+
+        .page-info {
+            color: #b0b0ff;
+            font-size: 14px;
+        }
+
+        /* Провайдеры */
+        .provider-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0 20px;
+        }
+
+        .provider-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 12px;
+            padding: 12px 5px;
+            font-size: 13px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .provider-btn:hover {
+            background: rgba(255, 215, 0, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .provider-btn.selected {
+            background: linear-gradient(135deg, #ffd966, #ffaa00);
+            color: #1a1f3f;
+            font-weight: 700;
+            border: none;
+        }
+
+        /* Кнопка запуска */
+        .start-btn {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            border: none;
+            border-radius: 50px;
+            padding: 18px;
+            width: 100%;
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .start-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(76, 175, 80, 0.4);
+        }
+
+        .start-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Анимация загрузки */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0f2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.5s ease;
+        }
+
+        .loading-screen.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loading-content {
+            text-align: center;
+        }
+
+        .loading-rocket {
+            font-size: 80px;
+            animation: flyLoader 2s ease-in-out infinite;
+        }
+
+        @keyframes flyLoader {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(-10deg); }
+            75% { transform: translateY(20px) rotate(10deg); }
+        }
+
+        .loading-text {
+            margin-top: 20px;
+            color: #ffd966;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .loading-percent {
+            margin-top: 10px;
+            color: #b0b0ff;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        /* Результаты */
+        .results {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 25px;
+            padding: 25px;
+            margin: 20px 0;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            color: #b0b0ff;
+            font-size: 14px;
+        }
+
+        .result-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #ffd966;
+        }
+
+        .result-bad {
+            color: #ff6b6b;
+        }
+
+        .result-good {
+            color: #4CAF50;
+        }
+
+        .warning {
+            background: rgba(255, 87, 34, 0.2);
+            border-left: 4px solid #ff5722;
             padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            color: #ffaa66;
+        }
+
+        /* Кнопки действий */
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 15px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .action-btn.free {
+            background: linear-gradient(135deg, #4a3f6e, #2a1f4e);
+            border: 1px solid #ffd966;
+            color: #fff;
+        }
+
+        .action-btn.vip {
+            background: linear-gradient(135deg, #6e4a3f, #4e2a1f);
+            border: 1px solid #ffaa00;
+            color: #fff;
+            animation: pulseVIP 2s infinite;
+        }
+
+        @keyframes pulseVIP {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Анимация ускорения */
+        .boost-animation {
+            text-align: center;
+            padding: 30px;
+            background: rgba(255, 215, 0, 0.1);
+            border-radius: 50px;
             margin: 20px 0;
         }
 
-        .online span {
-            color: #ffd966;
-            font-size: 28px;
-            font-weight: bold;
+        .rocket-boost {
+            font-size: 60px;
+            animation: boostFly 1s ease-in-out infinite;
+        }
+
+        @keyframes boostFly {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(20px); }
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ffd966, #ffaa00);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Кнопка назад */
+        .back-btn {
+            background: none;
+            border: 1px solid #b0b0ff;
+            color: #b0b0ff;
+            padding: 12px;
+            border-radius: 25px;
+            margin-top: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            background: rgba(176, 176, 255, 0.1);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🚀 TurboGram</h1>
-        
-        <div class="online">
-            <div>Сейчас онлайн:</div>
-            <span id="online">6,234</span>
-        </div>
-
-        <div class="btn" onclick="alert('Диагностика скоро будет!')">
-            ⚡️ Диагностика
-        </div>
-
-        <div class="btn" onclick="buyVIP()">
-            👑 VIP
+    <!-- Загрузочный экран -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loading-content">
+            <div class="loading-rocket">🚀😺</div>
+            <div class="loading-text">Запускаем космический ускоритель...</div>
+            <div class="loading-percent" id="loadingPercent">0%</div>
         </div>
     </div>
 
+    <!-- Звезды -->
+    <div class="stars" id="stars"></div>
+    
+    <!-- Летающие котики -->
+    <div class="floating-cats">
+        <div class="cat-rocket">😺🚀</div>
+        <div class="cat-rocket">😸🚀</div>
+        <div class="cat-rocket">😹🚀</div>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="content" id="mainContent">
+        <!-- Шапка -->
+        <div class="header">
+            <div class="logo">🚀😺</div>
+            <div class="title">TurboGram</div>
+            <div class="subtitle">Космический ускоритель Telegram</div>
+        </div>
+
+        <!-- Большая кнопка диагностики -->
+        <div class="big-diagnostic-btn" onclick="startLoading()">
+            <div class="btn-icon">🚀</div>
+            <div class="btn-text">ДИАГНОСТИКА</div>
+            <div class="btn-subtext">нажми чтобы начать</div>
+        </div>
+
+        <!-- Скрытый контент -->
+        <div class="hidden-content" id="hiddenContent"></div>
+    </div>
+
     <script>
+        // Получаем Telegram Web App
         const tg = window.Telegram?.WebApp;
         if (tg) {
             tg.ready();
             tg.expand();
         }
 
-        function buyVIP() {
-            if (tg) {
-                tg.sendData(JSON.stringify({action: 'buy_vip'}));
-            } else {
-                alert('VIP покупка только в Telegram');
+        // Все регионы
+        const regions = [
+            "Москва", "Санкт-Петербург", "Московская обл.", "Ленинградская обл.",
+            "Адыгея", "Алтай", "Амурская обл.", "Архангельская обл.",
+            "Астраханская обл.", "Башкортостан", "Белгородская обл.", "Брянская обл.",
+            "Бурятия", "Владимирская обл.", "Волгоградская обл.", "Вологодская обл.",
+            "Воронежская обл.", "Дагестан", "ДНР", "Еврейская АО",
+            "Забайкальский край", "Запорожская обл.", "Ивановская обл.", "Ингушетия",
+            "Иркутская обл.", "Кабардино-Балкария", "Калининградская обл.", "Калмыкия",
+            "Калужская обл.", "Камчатский край", "Карачаево-Черкесия", "Карелия",
+            "Кемеровская обл.", "Кировская обл.", "Коми", "Костромская обл.",
+            "Краснодарский край", "Красноярский край", "Крым", "Курганская обл.",
+            "Курская обл.", "Липецкая обл.", "ЛНР", "Магаданская обл.",
+            "Марий Эл", "Мордовия", "Мурманская обл.", "Ненецкий АО",
+            "Нижегородская обл.", "Новгородская обл.", "Новосибирская обл.", "Омская обл.",
+            "Оренбургская обл.", "Орловская обл.", "Пензенская обл.", "Пермский край",
+            "Приморский край", "Псковская обл.", "Ростовская обл.", "Рязанская обл.",
+            "Самарская обл.", "Саратовская обл.", "Саха (Якутия)", "Сахалинская обл.",
+            "Свердловская обл.", "Севастополь", "Северная Осетия", "Смоленская обл.",
+            "Ставропольский край", "Тамбовская обл.", "Татарстан", "Тверская обл.",
+            "Томская обл.", "Тульская обл.", "Тыва", "Тюменская обл.",
+            "Удмуртия", "Ульяновская обл.", "Хабаровский край", "Хакасия",
+            "Ханты-Мансийский АО", "Челябинская обл.", "Чечня", "Чувашия",
+            "Чукотский АО", "Ямало-Ненецкий АО", "Ярославская обл."
+        ];
+
+        const providers = [
+            "Ростелеком", "МТС", "Билайн", "Мегафон", 
+            "Tele2", "Yota", "Дом.ru", "Другой"
+        ];
+
+        // Переменные
+        let currentRegionPage = 0;
+        const regionsPerPage = 8;
+        let selectedRegion = null;
+        let selectedProvider = null;
+
+        // Ждем загрузки страницы
+        window.addEventListener('load', function() {
+            // Создаем звезды
+            createStars();
+            
+            // Автоматически скрываем загрузку через 2 секунды
+            setTimeout(function() {
+                const loadingScreen = document.getElementById('loadingScreen');
+                if (loadingScreen) {
+                    loadingScreen.classList.add('hidden');
+                }
+            }, 2000);
+        });
+
+        // Создаем звезды
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            if (!starsContainer) return;
+            
+            for (let i = 0; i < 50; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.width = Math.random() * 3 + 'px';
+                star.style.height = star.style.width;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starsContainer.appendChild(star);
             }
         }
 
-        setInterval(() => {
-            const online = Math.floor(Math.random() * (7000-5800) + 5800);
-            document.getElementById('online').textContent = online.toLocaleString();
-        }, 3000);
+        // Загрузка с процентами (5 секунд)
+        function startLoading() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (!loadingScreen) return;
+            
+            loadingScreen.classList.remove('hidden');
+            
+            let percent = 0;
+            const interval = setInterval(() => {
+                percent += 2;
+                const loadingPercent = document.getElementById('loadingPercent');
+                if (loadingPercent) loadingPercent.textContent = percent + '%';
+
+                if (percent >= 100) {
+                    clearInterval(interval);
+                    setTimeout(() => {
+                        loadingScreen.classList.add('hidden');
+                        showDiagnosticContent();
+                    }, 500);
+                }
+            }, 100);
+        }
+
+        // Показать контент диагностики
+        function showDiagnosticContent() {
+            const hiddenContent = document.getElementById('hiddenContent');
+            if (!hiddenContent) return;
+            
+            hiddenContent.innerHTML = `
+                <div class="online-card">
+                    <div class="online-value" id="onlineUsers">6,234</div>
+                    <div class="online-label">👥 Пользователей сейчас онлайн</div>
+                </div>
+
+                <div class="diagnostic-block">
+                    <div class="section-title">🚀 Выберите параметры</div>
+                    
+                    <div id="regionsContainer" class="region-grid"></div>
+                    
+                    <div class="nav-controls">
+                        <button class="nav-btn" onclick="prevRegionPage()">◀️</button>
+                        <span class="page-info" id="regionPageInfo">1/11</span>
+                        <button class="nav-btn" onclick="nextRegionPage()">▶️</button>
+                    </div>
+
+                    <div class="section-title" style="margin-top: 10px;">🏢 Провайдер</div>
+                    <div id="providersContainer" class="provider-grid"></div>
+
+                    <button class="start-btn" onclick="startDiagnostic()">
+                        🚀 Запустить диагностику
+                    </button>
+                </div>
+            `;
+            
+            hiddenContent.classList.add('show');
+            
+            loadRegions();
+            loadProviders();
+            
+            // Обновляем онлайн
+            setInterval(() => {
+                const online = Math.floor(Math.random() * (7000 - 5800 + 1)) + 5800;
+                const onlineUsers = document.getElementById('onlineUsers');
+                if (onlineUsers) onlineUsers.textContent = online.toLocaleString();
+            }, 3000);
+        }
+
+        // Загрузка регионов
+        function loadRegions() {
+            const container = document.getElementById('regionsContainer');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            const start = currentRegionPage * regionsPerPage;
+            const end = Math.min(start + regionsPerPage, regions.length);
+            
+            for (let i = start; i < end; i++) {
+                const btn = document.createElement('div');
+                btn.className = 'region-btn' + (selectedRegion === regions[i] ? ' selected' : '');
+                btn.textContent = regions[i];
+                btn.onclick = () => selectRegion(regions[i]);
+                container.appendChild(btn);
+            }
+            
+            const totalPages = Math.ceil(regions.length / regionsPerPage);
+            const pageInfo = document.getElementById('regionPageInfo');
+            if (pageInfo) pageInfo.textContent = `${currentRegionPage + 1}/${totalPages}`;
+        }
+
+        // Загрузка провайдеров
+        function loadProviders() {
+            const container = document.getElementById('providersContainer');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            providers.forEach(provider => {
+                const btn = document.createElement('div');
+                btn.className = 'provider-btn' + (selectedProvider === provider ? ' selected' : '');
+                btn.textContent = provider;
+                btn.onclick = () => selectProvider(provider);
+                container.appendChild(btn);
+            });
+        }
+
+        // Выбор региона
+        function selectRegion(region) {
+            selectedRegion = region;
+            document.querySelectorAll('.region-btn').forEach(btn => {
+                btn.classList.remove('selected');
+                if (btn.textContent === region) btn.classList.add('selected');
+            });
+        }
+
+        // Выбор провайдера
+        function selectProvider(provider) {
+            selectedProvider = provider;
+            document.querySelectorAll('.provider-btn').forEach(btn => {
+                btn.classList.remove('selected');
+                if (btn.textContent === provider) btn.classList.add('selected');
+            });
+        }
+
+        // Навигация
+        function prevRegionPage() {
+            if (currentRegionPage > 0) {
+                currentRegionPage--;
+                loadRegions();
+            }
+        }
+
+        function nextRegionPage() {
+            const totalPages = Math.ceil(regions.length / regionsPerPage);
+            if (currentRegionPage < totalPages - 1) {
+                currentRegionPage++;
+                loadRegions();
+            }
+        }
+
+        // Запуск диагностики (8 секунд)
+        function startDiagnostic() {
+            if (!selectedRegion || !selectedProvider) {
+                alert('⚠️ Выберите регион и провайдера!');
+                return;
+            }
+
+            const hiddenContent = document.getElementById('hiddenContent');
+            if (!hiddenContent) return;
+            
+            hiddenContent.innerHTML = `
+                <div class="boost-animation">
+                    <div class="rocket-boost">🚀😺</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                    <div id="boostPercent">0%</div>
+                    <div style="margin-top: 10px; color: #b0b0ff;">Анализ соединения...</div>
+                </div>
+            `;
+
+            let percent = 0;
+            const interval = setInterval(() => {
+                percent += 2;
+                const progressFill = document.getElementById('progressFill');
+                const boostPercent = document.getElementById('boostPercent');
+                
+                if (progressFill) progressFill.style.width = percent + '%';
+                if (boostPercent) boostPercent.textContent = percent + '%';
+
+                if (percent >= 100) {
+                    clearInterval(interval);
+                    setTimeout(showResults, 500);
+                }
+            }, 160);
+        }
+
+        // Показываем результаты
+        function showResults() {
+            const ping = Math.floor(Math.random() * (95 - 45 + 1)) + 45;
+            const download = (Math.random() * (5.5 - 2.0) + 2.0).toFixed(1);
+            const upload = (Math.random() * (2.8 - 1.0) + 1.0).toFixed(1);
+
+            const hiddenContent = document.getElementById('hiddenContent');
+            if (!hiddenContent) return;
+            
+            const onlineUsers = document.getElementById('onlineUsers');
+            const onlineValue = onlineUsers ? onlineUsers.textContent : '6,234';
+            
+            hiddenContent.innerHTML = `
+                <div class="online-card">
+                    <div class="online-value">${onlineValue}</div>
+                    <div class="online-label">👥 Пользователей сейчас онлайн</div>
+                </div>
+
+                <div class="results">
+                    <div class="section-title">📊 РЕЗУЛЬТАТЫ</div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Регион</span>
+                        <span class="result-value">${selectedRegion}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Провайдер</span>
+                        <span class="result-value">${selectedProvider}</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Пинг</span>
+                        <span class="result-value result-bad">${ping} мс</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Загрузка</span>
+                        <span class="result-value result-bad">${download} Mbps</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Отдача</span>
+                        <span class="result-value result-bad">${upload} Mbps</span>
+                    </div>
+
+                    <div class="warning">
+                        ⚠️ Обнаружены серьезные ограничения провайдера!<br>
+                        Скорость ниже нормы в 3-5 раз.
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="action-btn free" onclick="freeBoost()">⚡️ Бесплатно</button>
+                        <button class="action-btn vip" onclick="buyVIP()">👑 VIP</button>
+                    </div>
+                </div>
+
+                <button class="back-btn" onclick="resetToMain()">◀️ Назад</button>
+            `;
+        }
+
+        // Бесплатное ускорение (5 секунд)
+        function freeBoost() {
+            const hiddenContent = document.getElementById('hiddenContent');
+            if (!hiddenContent) return;
+            
+            hiddenContent.innerHTML = `
+                <div class="boost-animation">
+                    <div class="rocket-boost">⚡️😺</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFillFree"></div>
+                    </div>
+                    <div id="boostPercentFree">0%</div>
+                    <div style="margin-top: 10px; color: #b0b0ff;">Применение ускорения...</div>
+                </div>
+            `;
+
+            let percent = 0;
+            const interval = setInterval(() => {
+                percent += 2;
+                const progressFillFree = document.getElementById('progressFillFree');
+                const boostPercentFree = document.getElementById('boostPercentFree');
+                
+                if (progressFillFree) progressFillFree.style.width = percent + '%';
+                if (boostPercentFree) boostPercentFree.textContent = percent + '%';
+
+                if (percent >= 100) {
+                    clearInterval(interval);
+                    setTimeout(showFreeResult, 500);
+                }
+            }, 100);
+        }
+
+        // Результат бесплатного ускорения
+        function showFreeResult() {
+            const hiddenContent = document.getElementById('hiddenContent');
+            if (!hiddenContent) return;
+            
+            const onlineUsers = document.getElementById('onlineUsers');
+            const onlineValue = onlineUsers ? onlineUsers.textContent : '6,234';
+            
+            hiddenContent.innerHTML = `
+                <div class="online-card">
+                    <div class="online-value">${onlineValue}</div>
+                    <div class="online-label">👥 Пользователей сейчас онлайн</div>
+                </div>
+
+                <div class="results">
+                    <div class="section-title">✅ УСКОРЕНО!</div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Скорость</span>
+                        <span class="result-value result-good">+35%</span>
+                    </div>
+                    <div class="result-item">
+                        <span class="result-label">Пинг</span>
+                        <span class="result-value result-good">-18%</span>
+                    </div>
+
+                    <div class="warning">
+                        ⚠️ Бесплатная версия снимает ограничения частично.<br>
+                        Для полного ускорения нужен VIP!
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <button class="action-btn vip" onclick="buyVIP()" style="width: 100%;">👑 VIP за 100 ⭐️</button>
+                    </div>
+                </div>
+
+                <button class="back-btn" onclick="resetToMain()">◀️ Назад</button>
+            `;
+        }
+
+        // Покупка VIP
+        function buyVIP() {
+            if (tg) {
+                tg.sendData(JSON.stringify({
+                    action: 'buy_vip'
+                }));
+            } else {
+                alert('VIP покупка доступна только в Telegram');
+            }
+        }
+
+        // Сброс в главное меню
+        function resetToMain() {
+            location.reload();
+        }
     </script>
 </body>
 </html>
