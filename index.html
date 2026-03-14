@@ -609,6 +609,27 @@
             transform: translateY(-3px);
             box-shadow: 0 10px 25px rgba(255, 107, 107, 0.5);
         }
+
+        /* Уведомление */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: rgba(76, 175, 80, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            font-weight: 600;
+            animation: slideUp 0.3s ease;
+            z-index: 1000;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -647,6 +668,11 @@
             <div class="btn-subtext">нажми чтобы начать</div>
         </div>
 
+        <!-- Кнопка VIP прямо на главной -->
+        <div class="action-btn vip" onclick="buyVIP()" style="margin: 20px 0; padding: 20px; font-size: 20px;">
+            👑 VIP за 100 ⭐️
+        </div>
+
         <!-- Скрытый контент -->
         <div class="hidden-content" id="hiddenContent"></div>
         
@@ -654,12 +680,27 @@
         <button class="close-btn" onclick="closeApp()">✕ ЗАКРЫТЬ ПРИЛОЖЕНИЕ</button>
     </div>
 
+    <!-- Уведомление (скрыто по умолчанию) -->
+    <div class="notification" id="notification" style="display: none;"></div>
+
     <script>
         // Получаем Telegram Web App
         const tg = window.Telegram?.WebApp;
         if (tg) {
             tg.ready();
             tg.expand();
+        }
+
+        // Функция показа уведомления
+        function showNotification(text, isSuccess = true) {
+            const notification = document.getElementById('notification');
+            notification.style.display = 'block';
+            notification.textContent = text;
+            notification.style.background = isSuccess ? 'rgba(76, 175, 80, 0.9)' : 'rgba(255, 87, 34, 0.9)';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
         }
 
         // Функция закрытия приложения
@@ -1133,15 +1174,24 @@
             `;
         }
 
-        // Покупка VIP
+        // ПОКУПКА VIP - ИСПРАВЛЕННАЯ ВЕРСИЯ
         function buyVIP() {
             if (tg) {
-                tg.sendData(JSON.stringify({
-                    action: 'buy_vip'
-                }));
+                // Показываем уведомление
+                showNotification('⏳ Отправка запроса...', true);
+                
+                // Отправляем данные в бота (ПРОСТО ТЕКСТ, НЕ JSON)
+                tg.sendData('buy_vip');
+                
+                // Показываем сообщение об успехе
+                setTimeout(() => {
+                    showNotification('✅ Запрос отправлен! Сейчас откроется бот для оплаты.', true);
+                }, 500);
+                
+                // Закрываем приложение через 2 секунды
                 setTimeout(() => {
                     tg.close();
-                }, 500);
+                }, 2000);
             } else {
                 alert('VIP покупка доступна только в Telegram');
             }
