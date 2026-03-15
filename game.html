@@ -82,6 +82,20 @@
             font-weight: 700;
         }
 
+        #difficulty {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid #4CAF50;
+            border-radius: 30px;
+            padding: 5px 15px;
+            color: #4CAF50;
+            font-size: 14px;
+            font-weight: 600;
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
         #message {
             position: absolute;
             top: 50%;
@@ -142,39 +156,17 @@
             pointer-events: none;
             text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
         }
-
-        .stars {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .star {
-            position: absolute;
-            background: white;
-            border-radius: 50%;
-            animation: twinkle 3s infinite;
-        }
-
-        @keyframes twinkle {
-            0%, 100% { opacity: 0.2; }
-            50% { opacity: 1; }
-        }
     </style>
 </head>
 <body>
     <div id="gameContainer">
-        <div class="stars" id="stars"></div>
         <canvas id="gameCanvas"></canvas>
         
         <div id="ui">
             <div id="timer">0с</div>
             <div id="score">💥 0</div>
         </div>
+        <div id="difficulty">🌌 УРОВЕНЬ 1</div>
         
         <div id="message">
             <h2>🚀 ИГРА</h2>
@@ -191,19 +183,6 @@
         if (tg) {
             tg.ready();
             tg.expand();
-        }
-
-        // Создаем звезды
-        const starsContainer = document.getElementById('stars');
-        for (let i = 0; i < 50; i++) {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.width = Math.random() * 3 + 'px';
-            star.style.height = star.style.width;
-            star.style.left = Math.random() * 100 + '%';
-            star.style.top = Math.random() * 100 + '%';
-            star.style.animationDelay = Math.random() * 3 + 's';
-            starsContainer.appendChild(star);
         }
 
         // Canvas
@@ -224,27 +203,44 @@
         let gameTime = 0;
         let score = 0;
         let animationId = null;
+        let difficultyLevel = 1;
         
-        // Ракета
+        // ============================================================
+        // МАЛЕНЬКИЕ ЗВЕЗДЫ НА ФОНЕ
+        // ============================================================
+        let stars = [];
+        const STAR_COUNT = 150; // Больше звезд
+        
+        // Создаем маленькие звезды
+        for (let i = 0; i < STAR_COUNT; i++) {
+            stars.push({
+                x: Math.random() * canvas.width,
+                y: Math.random() * canvas.height,
+                size: Math.random() * 1.5 + 0.5, // ОЧЕНЬ МАЛЕНЬКИЕ (0.5-2px)
+                speed: Math.random() * 1.5 + 0.5,
+                brightness: Math.random() * 0.7 + 0.3
+            });
+        }
+        
+        // ============================================================
+        // УМЕНЬШЕННАЯ РАКЕТА
+        // ============================================================
         let rocket = {
             x: canvas.width / 2,
-            y: canvas.height - 100,
-            radius: 20,
+            y: canvas.height - 120,
+            width: 25,
+            height: 50,
+            wingSize: 15,
+            baseHeight: 8,
             speed: 5
         };
         
         // Астероиды
         let asteroids = [];
-        const MAX_ASTEROIDS = 15;
+        const MAX_ASTEROIDS = 20;
         let asteroidSpawnTimer = 0;
-        const ASTEROID_SPAWN_RATE = 30; // кадров между спавном
+        const ASTEROID_SPAWN_RATE = 30;
         
-        // Сложность
-        let difficulty = 1;
-        
-        // Кадры
-        let frameCount = 0;
-
         // Отправка результата в бота
         function sendResult(time) {
             if (tg) {
@@ -259,12 +255,13 @@
         function resetGame() {
             gameTime = 0;
             score = 0;
-            difficulty = 1;
+            difficultyLevel = 1;
             asteroids = [];
             rocket.x = canvas.width / 2;
-            rocket.y = canvas.height - 100;
+            rocket.y = canvas.height - 120;
             document.getElementById('timer').textContent = '0с';
             document.getElementById('score').textContent = '💥 0';
+            document.getElementById('difficulty').textContent = '🌌 УРОВЕНЬ 1';
         }
 
         // Начало игры
@@ -290,23 +287,61 @@
                 startBtn.textContent = 'ПОЛУЧИТЬ СКИДКУ';
                 sendResult(gameTime);
             } else {
-                messageText.innerHTML = `💥 Ты взорвался!<br>Продержался ${Math.floor(gameTime)} секунд.<br><br>Нужно 30 секунд для скидки.`;
+                messageText.innerHTML = `💥 Ты взорвался!<br>Продержался ${Math.floor(gameTime)} секунд на уровне ${difficultyLevel}.<br><br>Нужно 30 секунд для скидки.`;
                 startBtn.textContent = 'ПОПРОБОВАТЬ СНОВА';
             }
             
             message.style.display = 'block';
         }
 
-        // Создание астероида
+        // Создание астероида с учетом сложности
         function spawnAsteroid() {
-            const size = 15 + Math.random() * 20 * difficulty;
+            const baseSize = 8;
+            const sizeMultiplier = 1 + (difficultyLevel * 0.2);
+            const size = baseSize + Math.random() * 12 * sizeMultiplier;
+            
+            // Скорость зависит от сложности
+            const baseSpeed = 2;
+            const speedMultiplier = 1 + (difficultyLevel * 0.15);
+            
             asteroids.push({
                 x: Math.random() * canvas.width,
                 y: -size,
                 radius: size,
-                speedY: 2 + Math.random() * 3 * difficulty,
-                speedX: (Math.random() - 0.5) * 1.5
+                speedY: baseSpeed + Math.random() * 4 * speedMultiplier,
+                speedX: (Math.random() - 0.5) * 2 * (1 + difficultyLevel * 0.1)
             });
+        }
+
+        // Обновление маленьких звезд
+        function updateStars() {
+            for (let i = 0; i < stars.length; i++) {
+                // Звезды движутся вниз (очень медленно)
+                stars[i].y += stars[i].speed * (0.3 + difficultyLevel * 0.05);
+                
+                // Если звезда ушла за экран - появляется сверху
+                if (stars[i].y > canvas.height) {
+                    stars[i].y = 0;
+                    stars[i].x = Math.random() * canvas.width;
+                }
+            }
+        }
+
+        // Отрисовка маленьких звезд
+        function drawStars() {
+            ctx.save();
+            ctx.shadowBlur = 0;
+            
+            for (let i = 0; i < stars.length; i++) {
+                ctx.beginPath();
+                ctx.arc(stars[i].x, stars[i].y, stars[i].size, 0, Math.PI * 2);
+                
+                // Очень маленькие, полупрозрачные звезды
+                ctx.fillStyle = `rgba(255, 255, 255, ${stars[i].brightness * 0.7})`;
+                ctx.fill();
+            }
+            
+            ctx.restore();
         }
 
         // Обновление игры
@@ -317,16 +352,28 @@
             gameTime += 1/60;
             document.getElementById('timer').textContent = Math.floor(gameTime) + 'с';
             
-            // Сложность растет со временем
-            difficulty = 1 + (gameTime / 60); // каждые 60 секунд сложность удваивается
+            // Обновляем уровень сложности (каждые 5 секунд)
+            const newDifficulty = 1 + Math.floor(gameTime / 5);
+            if (newDifficulty > difficultyLevel) {
+                difficultyLevel = newDifficulty;
+                document.getElementById('difficulty').textContent = `🌌 УРОВЕНЬ ${difficultyLevel}`;
+            }
             
-            // Спавн астероидов
+            // Обновляем маленькие звезды
+            updateStars();
+            
+            // Спавн астероидов (чаще с ростом сложности)
             asteroidSpawnTimer++;
-            const currentSpawnRate = Math.max(10, ASTEROID_SPAWN_RATE - Math.floor(gameTime / 5));
+            const spawnRate = Math.max(8, ASTEROID_SPAWN_RATE - difficultyLevel * 2);
             
-            if (asteroidSpawnTimer >= currentSpawnRate && asteroids.length < MAX_ASTEROIDS) {
+            if (asteroidSpawnTimer >= spawnRate && asteroids.length < MAX_ASTEROIDS) {
                 spawnAsteroid();
                 asteroidSpawnTimer = 0;
+                
+                // Иногда спавним сразу два астероида на высоких уровнях
+                if (difficultyLevel > 3 && Math.random() < 0.3) {
+                    spawnAsteroid();
+                }
             }
             
             // Движение астероидов
@@ -342,20 +389,30 @@
                     document.getElementById('score').textContent = '💥 ' + score;
                 }
                 
-                // Отскок от стенок
+                // Отскок от стенок (более хаотичный на высоких уровнях)
                 if (a.x - a.radius < 0 || a.x + a.radius > canvas.width) {
-                    a.speedX *= -0.8;
+                    a.speedX *= -0.9;
+                    
+                    // Иногда меняем скорость на высоких уровнях
+                    if (difficultyLevel > 4 && Math.random() < 0.2) {
+                        a.speedY *= 1.2;
+                    }
                 }
             }
             
             // Проверка столкновений
             for (let i = 0; i < asteroids.length; i++) {
                 const a = asteroids[i];
+                
+                // Проверка расстояния до центра ракеты
                 const dx = rocket.x - a.x;
                 const dy = rocket.y - a.y;
                 const distance = Math.sqrt(dx*dx + dy*dy);
                 
-                if (distance < rocket.radius + a.radius) {
+                // Приблизительная коллизия для овальной ракеты
+                const rocketRadius = Math.max(rocket.width, rocket.height) * 0.6;
+                
+                if (distance < rocketRadius + a.radius) {
                     gameOver();
                     break;
                 }
@@ -375,70 +432,152 @@
             }
         }
 
-        // Отрисовка
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Отрисовка идеальной ракеты
+        function drawRocket() {
+            ctx.save();
             
-            // Рисуем астероиды
-            asteroids.forEach(a => {
-                // Тень
-                ctx.shadowColor = '#ff6b6b';
-                ctx.shadowBlur = 20;
-                
-                // Астероид
-                ctx.beginPath();
-                ctx.arc(a.x, a.y, a.radius, 0, Math.PI * 2);
-                ctx.fillStyle = '#8B4513';
-                ctx.fill();
-                
-                // Кратер
-                ctx.shadowBlur = 10;
-                ctx.beginPath();
-                ctx.arc(a.x - 5, a.y - 5, a.radius * 0.3, 0, Math.PI * 2);
-                ctx.fillStyle = '#654321';
-                ctx.fill();
-            });
-            
-            // Рисуем ракету
-            ctx.shadowColor = '#ffd966';
-            ctx.shadowBlur = 30;
-            
-            // Корпус
+            // ============================================================
+            // 1. БЕЛЫЙ ОВАЛ (КОРПУС)
+            // ============================================================
             ctx.beginPath();
-            ctx.moveTo(rocket.x, rocket.y - rocket.radius * 1.5);
-            ctx.lineTo(rocket.x + rocket.radius, rocket.y + rocket.radius * 0.5);
-            ctx.lineTo(rocket.x - rocket.radius, rocket.y + rocket.radius * 0.5);
-            ctx.closePath();
-            ctx.fillStyle = '#ff6b6b';
+            ctx.ellipse(rocket.x, rocket.y, rocket.width/2, rocket.height/2, 0, 0, Math.PI * 2);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.shadowColor = 'rgba(255, 255, 255, 0.5)';
+            ctx.shadowBlur = 20;
             ctx.fill();
             
-            // Нос
-            ctx.beginPath();
-            ctx.arc(rocket.x, rocket.y - rocket.radius, rocket.radius * 0.7, 0, Math.PI * 2);
-            ctx.fillStyle = '#ff4444';
-            ctx.fill();
+            // Обводка овала
+            ctx.shadowBlur = 10;
+            ctx.strokeStyle = '#CCCCCC';
+            ctx.lineWidth = 2;
+            ctx.stroke();
             
-            // Иллюминатор
+            // ============================================================
+            // 2. ГОЛУБОЙ ИЛЛЮМИНАТОР
+            // ============================================================
+            ctx.shadowColor = '#87CEEB';
             ctx.shadowBlur = 15;
             ctx.beginPath();
-            ctx.arc(rocket.x, rocket.y - rocket.radius * 0.3, rocket.radius * 0.3, 0, Math.PI * 2);
+            ctx.arc(rocket.x, rocket.y, rocket.width/3, 0, Math.PI * 2);
             ctx.fillStyle = '#87CEEB';
             ctx.fill();
             
-            // Огонь (если игра идет)
+            // Блик
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.arc(rocket.x - 2, rocket.y - 2, rocket.width/8, 0, Math.PI * 2);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.globalAlpha = 0.7;
+            ctx.fill();
+            
+            // ============================================================
+            // 3. НИЖНЯЯ ЧАСТЬ
+            // ============================================================
+            ctx.globalAlpha = 1;
+            ctx.shadowColor = '#CCCCCC';
+            ctx.shadowBlur = 15;
+            ctx.fillStyle = '#EEEEEE';
+            
+            ctx.beginPath();
+            ctx.rect(rocket.x - rocket.width/2 - 1, rocket.y + rocket.height/2 - 2, rocket.width + 2, rocket.baseHeight);
+            ctx.fill();
+            
+            // ============================================================
+            // 4. КРАСНЫЕ КРЫЛЬЯ
+            // ============================================================
+            ctx.shadowColor = '#FF4444';
+            ctx.shadowBlur = 15;
+            ctx.fillStyle = '#FF4444';
+            
+            // Левое крыло
+            ctx.beginPath();
+            ctx.moveTo(rocket.x - rocket.width/2, rocket.y + rocket.height/4);
+            ctx.lineTo(rocket.x - rocket.width/2 - rocket.wingSize, rocket.y + rocket.height/2);
+            ctx.lineTo(rocket.x - rocket.width/2, rocket.y + rocket.height/2);
+            ctx.closePath();
+            ctx.fill();
+            
+            // Правое крыло
+            ctx.beginPath();
+            ctx.moveTo(rocket.x + rocket.width/2, rocket.y + rocket.height/4);
+            ctx.lineTo(rocket.x + rocket.width/2 + rocket.wingSize, rocket.y + rocket.height/2);
+            ctx.lineTo(rocket.x + rocket.width/2, rocket.y + rocket.height/2);
+            ctx.closePath();
+            ctx.fill();
+            
+            // ============================================================
+            // 5. ПЛАМЯ (зависит от уровня сложности)
+            // ============================================================
             if (gameRunning) {
-                ctx.shadowColor = '#ffaa00';
-                ctx.shadowBlur = 30;
+                ctx.shadowColor = '#FFAA00';
+                ctx.shadowBlur = 25;
+                
+                // Центральное пламя
+                const flameHeight = 20 + difficultyLevel * 3;
+                ctx.fillStyle = '#FFAA00';
                 ctx.beginPath();
-                ctx.moveTo(rocket.x - rocket.radius * 0.5, rocket.y + rocket.radius * 0.5);
-                ctx.lineTo(rocket.x, rocket.y + rocket.radius * 1.2);
-                ctx.lineTo(rocket.x + rocket.radius * 0.5, rocket.y + rocket.radius * 0.5);
-                ctx.fillStyle = '#ffaa00';
+                ctx.moveTo(rocket.x - 5, rocket.y + rocket.height/2 + rocket.baseHeight);
+                ctx.lineTo(rocket.x, rocket.y + rocket.height/2 + rocket.baseHeight + flameHeight);
+                ctx.lineTo(rocket.x + 5, rocket.y + rocket.height/2 + rocket.baseHeight);
                 ctx.fill();
+                
+                // Боковое пламя
+                ctx.fillStyle = '#FF8800';
+                ctx.beginPath();
+                ctx.moveTo(rocket.x - 8, rocket.y + rocket.height/2 + rocket.baseHeight);
+                ctx.lineTo(rocket.x - 3, rocket.y + rocket.height/2 + rocket.baseHeight + flameHeight * 0.7);
+                ctx.lineTo(rocket.x - 2, rocket.y + rocket.height/2 + rocket.baseHeight);
+                ctx.fill();
+                
+                ctx.beginPath();
+                ctx.moveTo(rocket.x + 8, rocket.y + rocket.height/2 + rocket.baseHeight);
+                ctx.lineTo(rocket.x + 3, rocket.y + rocket.height/2 + rocket.baseHeight + flameHeight * 0.7);
+                ctx.lineTo(rocket.x + 2, rocket.y + rocket.height/2 + rocket.baseHeight);
+                ctx.fill();
+                
+                // Искры
+                ctx.shadowBlur = 15;
+                ctx.fillStyle = '#FFD966';
+                
+                for (let i = 0; i < difficultyLevel; i++) {
+                    const offsetX = (Math.random() - 0.5) * 15;
+                    const offsetY = 15 + Math.random() * 15;
+                    ctx.beginPath();
+                    ctx.arc(rocket.x + offsetX, rocket.y + rocket.height/2 + rocket.baseHeight + offsetY, 1 + Math.random() * 2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
             }
             
-            // Сброс теней
-            ctx.shadowBlur = 0;
+            ctx.restore();
+        }
+
+        // Отрисовка астероидов
+        function drawAsteroids() {
+            asteroids.forEach(a => {
+                ctx.save();
+                
+                ctx.shadowColor = '#8B4513';
+                ctx.shadowBlur = 20;
+                
+                ctx.beginPath();
+                ctx.arc(a.x, a.y, a.radius, 0, Math.PI * 2);
+                
+                const gradient = ctx.createRadialGradient(a.x - 3, a.y - 3, 0, a.x, a.y, a.radius);
+                gradient.addColorStop(0, '#8B4513');
+                gradient.addColorStop(0.7, '#654321');
+                gradient.addColorStop(1, '#3d2b1a');
+                
+                ctx.fillStyle = gradient;
+                ctx.fill();
+                
+                ctx.shadowBlur = 10;
+                ctx.beginPath();
+                ctx.arc(a.x - 3, a.y - 3, a.radius * 0.3, 0, Math.PI * 2);
+                ctx.fillStyle = '#5d3a1a';
+                ctx.fill();
+                
+                ctx.restore();
+            });
         }
 
         // Игровой цикл
@@ -446,16 +585,28 @@
             if (gameRunning) {
                 update();
             }
-            draw();
+            
+            // Очистка
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Отрисовка маленьких звезд (фон)
+            drawStars();
+            
+            // Отрисовка астероидов
+            drawAsteroids();
+            
+            // Отрисовка ракеты
+            drawRocket();
+            
             animationId = requestAnimationFrame(gameLoop);
         }
 
-        // Управление мышью/пальцем
+        // Управление
         canvas.addEventListener('mousemove', (e) => {
             if (!gameRunning) return;
             const rect = canvas.getBoundingClientRect();
             const x = e.clientX - rect.left;
-            rocket.x = Math.max(rocket.radius, Math.min(canvas.width - rocket.radius, x));
+            rocket.x = Math.max(rocket.width/2, Math.min(canvas.width - rocket.width/2, x));
         });
 
         canvas.addEventListener('touchmove', (e) => {
@@ -464,7 +615,7 @@
             const rect = canvas.getBoundingClientRect();
             const touch = e.touches[0];
             const x = touch.clientX - rect.left;
-            rocket.x = Math.max(rocket.radius, Math.min(canvas.width - rocket.radius, x));
+            rocket.x = Math.max(rocket.width/2, Math.min(canvas.width - rocket.width/2, x));
         }, { passive: false });
 
         canvas.addEventListener('touchstart', (e) => {
@@ -474,10 +625,10 @@
         // Кнопка старта
         document.getElementById('startBtn').addEventListener('click', startGame);
 
-        // Показываем сообщение при загрузке
+        // Показываем сообщение
         document.getElementById('message').style.display = 'block';
         
-        // Запускаем игру (будет ждать старта)
+        // Запускаем игру
         gameLoop();
     </script>
 </body>
